@@ -24,6 +24,8 @@ git remote -v
 
 ### Determine the default branch, pull latest, and create branch
 
+Always create a clean branch directly off `origin/<default>`. Do NOT base it on any existing local branch.
+
 ```bash
 DEFAULT_BRANCH="$(gh repo view {owner}/{repo} --json defaultBranchRef --jq '.defaultBranchRef.name')"
 git fetch origin "$DEFAULT_BRANCH"
@@ -33,6 +35,8 @@ git checkout -b fix/dependabot-alerts "origin/$DEFAULT_BRANCH"
 Do not assume the default branch is `main`; it may be `master`, `trunk`, or something else.
 
 If a `fix/dependabot-alerts` branch already exists, use `fix/dependabot-alerts-2` (or increment the suffix).
+
+If you are already on an existing branch that has unrelated commits ahead of the default branch, do not use it. Always start fresh from `origin/<default>`.
 
 ## Step 2: Fetch open alerts
 
