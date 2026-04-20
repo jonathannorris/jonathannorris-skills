@@ -1,0 +1,9 @@
+{
+  "name": "adr-authoring",
+  "description": "Author Architecture Decision Records (ADRs) from proposals, issues, or scratch",
+  "author": {
+    "name": "Jonathan Norris",
+    "email": "jonathan@devcycle.com"
+  },
+  "version": "1.0.0"
+}

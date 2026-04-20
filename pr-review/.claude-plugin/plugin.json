@@ -1,0 +1,9 @@
+{
+  "name": "pr-review",
+  "description": "Fetch, analyze, and draft responses to GitHub PR review comments",
+  "author": {
+    "name": "Jonathan Norris",
+    "email": "jonathan@devcycle.com"
+  },
+  "version": "1.0.0"
+}

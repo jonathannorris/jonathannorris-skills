@@ -1,0 +1,9 @@
+{
+  "name": "dependabot-alerts",
+  "description": "Fix open Dependabot security alerts across any repo",
+  "author": {
+    "name": "Jonathan Norris",
+    "email": "jonathan@devcycle.com"
+  },
+  "version": "1.0.0"
+}

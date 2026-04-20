@@ -1,0 +1,29 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "jonathan-skills",
+  "description": "Jonathan Norris's personal Claude Code skills",
+  "owner": {
+    "name": "Jonathan Norris",
+    "email": "jonathan@devcycle.com"
+  },
+  "plugins": [
+    {
+      "name": "adr-authoring",
+      "description": "Author Architecture Decision Records (ADRs) from proposals, issues, or scratch",
+      "source": "./adr-authoring",
+      "category": "productivity"
+    },
+    {
+      "name": "dependabot-alerts",
+      "description": "Fix open Dependabot security alerts across any repo",
+      "source": "./dependabot-alerts",
+      "category": "security"
+    },
+    {
+      "name": "pr-review",
+      "description": "Fetch, analyze, and draft responses to GitHub PR review comments",
+      "source": "./pr-review",
+      "category": "productivity"
+    }
+  ]
+}
