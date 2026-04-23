@@ -222,9 +222,11 @@ For commits addressing multiple alerts, include a body listing the changes:
 ```
 fix: resolve open dependabot security alerts
 
-- <package> <old_version> -> <new_version> (<severity>, alert #<number>)
-- <package> <old_version> -> <new_version> (<severity>, alert #<number>)
+- <package> <old_version> -> <new_version> (<severity>, Dependabot alert <number>)
+- <package> <old_version> -> <new_version> (<severity>, Dependabot alert <number>)
 ```
+
+IMPORTANT: Do NOT use `#<number>` in commit messages or PR bodies when referring to Dependabot alerts — GitHub auto-links `#N` to issues/PRs, not security alerts. Use the full alert URL instead (see PR body format below).
 
 IMPORTANT: Follow the AGENTS.md rules for this repo. Do NOT commit unless the user explicitly requests it. Always present the proposed commit message for review first.
 
@@ -255,8 +257,8 @@ fix: resolve open dependabot security alerts
 ```markdown
 ## Summary
 
-- Bumped <package> to <version> to resolve <severity> vulnerability (<summary>)
-- Added resolution for <package> to fix transitive <severity> vulnerability
+- Bumped `<package>` to `<version>` to resolve <severity> vulnerability (<summary>) — [Dependabot alert <num>](https://github.com/{owner}/{repo}/security/dependabot/<num>)
+- Added resolution for `<package>` to fix transitive <severity> vulnerability — [Dependabot alert <num>](https://github.com/{owner}/{repo}/security/dependabot/<num>)
 ```
 
 **For 3 or more alerts**, include a resolution table:
@@ -270,8 +272,10 @@ fix: resolve open dependabot security alerts
 
 | Alert | Package | Severity | Fix |
 |-------|---------|----------|-----|
-| #<num> | `<package>` | **<severity>** | Bumped to <version> via <mechanism> |
+| [Alert <num>](https://github.com/{owner}/{repo}/security/dependabot/<num>) | `<package>` | **<severity>** | Bumped to <version> via <mechanism> |
 ```
+
+IMPORTANT: Always use the full URL `https://github.com/{owner}/{repo}/security/dependabot/<num>` for Dependabot alert links in PR bodies. Never use bare `#<num>` — GitHub resolves those to issues/PRs, not security alerts.
 
 ### Create the PR
 
