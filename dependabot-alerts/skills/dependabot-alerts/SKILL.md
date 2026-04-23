@@ -102,24 +102,26 @@ gh api --paginate --slurp repos/{owner}/{repo}/dependabot/alerts \
 
 2. **Direct dependency:** Bump the version in `package.json` `dependencies` or `devDependencies`.
 
-3. **Transitive dependency:** Use resolutions/overrides to force the patched version:
+3. **Transitive dependency:** Use resolutions/overrides to force the patched version. First run `yarn why <package>` (or `npm ls`/`pnpm why`) to see what range the parent uses, then **match that range style** in your resolution:
+   - If the parent specifies `^4.12.12`, use `^<patched_version>` (e.g. `^4.12.14`)
+   - If the parent specifies an exact version or the package has no semver-compatible patched release, use an exact version (e.g. `4.12.14`)
    - **yarn (v1/classic):** Add to `resolutions` in `package.json`:
      ```json
      "resolutions": {
-       "<package>": ">=<patched_version>"
+       "<package>": "^<patched_version>"
      }
      ```
    - **npm:** Add to `overrides` in `package.json`:
      ```json
      "overrides": {
-       "<package>": ">=<patched_version>"
+       "<package>": "^<patched_version>"
      }
      ```
    - **pnpm:** Add to `pnpm.overrides` in `package.json`:
      ```json
      "pnpm": {
        "overrides": {
-         "<package>": ">=<patched_version>"
+         "<package>": "^<patched_version>"
        }
      }
      ```
@@ -301,5 +303,5 @@ EOF
 - For JS transitive deps, prefer `resolutions`/`overrides` over upgrading the parent package (less risk of breaking changes)
 - Some alerts may not have a patched version yet; note these as unresolvable and skip them
 - If an alert is for a dev/test-only dependency, it is still worth fixing but lower priority than production dependencies
-- Lock exact versions in resolutions (not ranges) when the vulnerable range is wide
+- Match the version range style used by the dependent package — if it uses `^`, your resolution should too; use an exact version only when the package is pinned exactly or has breaking changes in the patched release
 - After fixing, the Dependabot alert should auto-close when GitHub detects the patched version in the default branch
