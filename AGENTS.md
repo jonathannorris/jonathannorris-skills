@@ -119,6 +119,20 @@ The content is the same as the Claude Code SKILL.md, with two differences:
 - Remove `allowed-tools` from the frontmatter
 - Inline any reference content that matters — OpenCode can't follow relative file links into `references/`
 
+### Step 5 — Enable in Claude Code settings
+
+Adding a skill to the marketplace makes it available, but Claude Code won't load it until it's explicitly enabled. Add the skill to `enabledPlugins` in `~/.claude/settings.json`:
+
+```json
+"enabledPlugins": {
+  "<skill-name>@jonathan-skills": true
+}
+```
+
+The key format is `<skill-name>@<marketplace-name>`, where the marketplace name matches the key in `extraKnownMarketplaces` — in this repo that's always `jonathan-skills`. Claude Code picks up the change on the next session start; no restart required if already running.
+
+OpenCode has no equivalent step — skills in `~/.config/opencode/skills/` are loaded automatically.
+
 ---
 
 ## Checklist for a new skill
@@ -127,6 +141,7 @@ The content is the same as the Claude Code SKILL.md, with two differences:
 - [ ] `<name>/.claude-plugin/plugin.json` created
 - [ ] `.claude-plugin/marketplace.json` updated with new entry
 - [ ] `~/.config/opencode/skills/<name>/SKILL.md` created (flat, no `allowed-tools`)
+- [ ] `~/.claude/settings.json` `enabledPlugins` updated with `<name>@jonathan-skills`
 - [ ] Optional: `<name>/skills/<name>/references/*.md` for deep-dive topics
 
 ---
