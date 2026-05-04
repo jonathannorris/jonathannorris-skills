@@ -1,0 +1,9 @@
+{
+  "name": "acli",
+  "description": "Interact with Jira using the Atlassian CLI (acli). Covers looking up tickets, searching with JQL, creating and editing work items, transitioning status, and adding comments.",
+  "author": {
+    "name": "Jonathan Norris",
+    "email": "jonathan@devcycle.com"
+  },
+  "version": "1.0.0"
+}

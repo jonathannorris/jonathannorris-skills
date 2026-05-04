@@ -8,6 +8,12 @@
   },
   "plugins": [
     {
+      "name": "acli",
+      "description": "Interact with Jira using the Atlassian CLI (acli). Covers looking up tickets, searching with JQL, creating and editing work items, transitioning status, and adding comments.",
+      "source": "./acli",
+      "category": "productivity"
+    },
+    {
       "name": "adr-authoring",
       "description": "Author Architecture Decision Records (ADRs) from proposals, issues, or scratch",
       "source": "./adr-authoring",
@@ -18,6 +24,12 @@
       "description": "Fix open Dependabot security alerts across any repo",
       "source": "./dependabot-alerts",
       "category": "security"
+    },
+    {
+      "name": "playwright-cli",
+      "description": "Give an AI agent browser access to navigate, inspect, and interact with websites",
+      "source": "./playwright-cli",
+      "category": "testing"
     },
     {
       "name": "pr-review",

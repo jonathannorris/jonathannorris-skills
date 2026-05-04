@@ -102,9 +102,27 @@ gh api --paginate --slurp repos/{owner}/{repo}/dependabot/alerts \
 
 2. **Direct dependency:** Bump the version in `package.json` `dependencies` or `devDependencies`.
 
-3. **Transitive dependency:** Use resolutions/overrides to force the patched version. First run `yarn why <package>` (or `npm ls`/`pnpm why`) to see what range the parent uses, then **match that range style** in your resolution:
-   - If the parent specifies `^4.12.12`, use `^<patched_version>` (e.g. `^4.12.14`)
-   - If the parent specifies an exact version or the package has no semver-compatible patched release, use an exact version (e.g. `4.12.14`)
+3. **Transitive dependency:** The right approach depends on whether the vulnerable package is a dev/test dependency or a production dependency.
+
+   **Dev/test transitive deps — bump the direct dev dep:**
+   For transitive deps that only affect development (test runners, linters, build tools, etc.), bump the direct dev dependency that brings in the vulnerable package to a version that ships the patched transitive dep:
+   ```bash
+   npm view "<parent>@latest" dependencies   # check what transitive version it ships
+   ```
+   Update the version in `devDependencies` and regenerate the lockfile. This is the cleanest approach — explicit, readable, and survives full lockfile regenerations.
+
+   **Production transitive deps — ask the user:**
+   If the vulnerable package is a production dependency (shipped to consumers of the package), ask the user how they want to handle it before proceeding. Options include:
+   - Bumping the direct parent to a version that ships the patched transitive dep
+   - Adding a permanent override/resolution in `package.json`
+   - Accepting the risk if the vulnerability is not exploitable in the current usage
+
+   Check if a newer parent version already ships the fix:
+   ```bash
+   npm view "<parent>@latest" dependencies   # check what transitive version it ships
+   ```
+
+   **When overrides in `package.json` are needed** (e.g. yarn, pnpm, repos without a committed lockfile, or production deps after user approval — see lockfile-pinning trick below as an alternative for npm):
    - **yarn (v1/classic):** Add to `resolutions` in `package.json`:
      ```json
      "resolutions": {
@@ -125,6 +143,16 @@ gh api --paginate --slurp repos/{owner}/{repo}/dependabot/alerts \
        }
      }
      ```
+   Match the version range style used by the dependent package — if it uses `^`, your resolution should too.
+
+   **npm lockfile-pinning trick (alternative to permanent overrides):** If you want to avoid leaving overrides in `package.json` for npm projects with a committed lockfile:
+   1. Add the override temporarily to `package.json`
+   2. Run `npm install` — this pins the patched version into the lockfile
+   3. Remove the override from `package.json`
+   4. Run `npm install` again to sync
+   5. Verify with `npm ls <package>` that the patched version is still resolved
+
+   The lockfile retains the pinned version across `npm ci` installs. Note: the pin will drift if someone runs `npm update <package>` or fully regenerates the lockfile.
 
 4. **Regenerate the lockfile:**
    ```bash
@@ -211,16 +239,16 @@ gh api --paginate --slurp repos/{owner}/{repo}/dependabot/alerts \
 
 ## Step 5: Commit
 
-Use conventional commit format:
+Use conventional commit format with the `chore` type, since dependency bumps are maintenance work:
 
 ```
-fix: resolve open dependabot security alerts
+chore: resolve open dependabot security alerts
 ```
 
 For commits addressing multiple alerts, include a body listing the changes:
 
 ```
-fix: resolve open dependabot security alerts
+chore: resolve open dependabot security alerts
 
 - <package> <old_version> -> <new_version> (<severity>, Dependabot alert <number>)
 - <package> <old_version> -> <new_version> (<severity>, Dependabot alert <number>)
@@ -245,42 +273,39 @@ git push -u origin fix/dependabot-alerts
 
 ### PR title
 
-Use conventional commit format:
+Use conventional commit format with the `chore` type:
 ```
-fix: resolve open dependabot security alerts
+chore: resolve open dependabot security alerts
 ```
 
 ### PR body format
 
-**For fewer than 3 alerts**, use a simple bullet list:
+Keep the PR description short. Use a single `## Summary` section with a few bullets describing the high-level changes — do NOT generate an exhaustive list or table of every alert. Dependabot will auto-close resolved alerts on merge, so the PR body does not need to enumerate them.
+
+Aim for 1-3 bullets covering:
+- The overall scope (e.g., "Resolved N of M open Dependabot security alerts by bumping vulnerable dependencies across `<area1>`, `<area2>`")
+- Any notable cross-cutting changes (e.g., "Updated CI from Node 18 to Node 24", "Added overrides for transitive deps with no direct upgrade path")
+- Any alerts that could NOT be resolved and why (e.g., "Alerts X, Y for `<package>` have no patched version available")
 
 ```markdown
 ## Summary
 
-- Bumped `<package>` to `<version>` to resolve <severity> vulnerability (<summary>) — [Dependabot alert <num>](https://github.com/{owner}/{repo}/security/dependabot/<num>)
-- Added resolution for `<package>` to fix transitive <severity> vulnerability — [Dependabot alert <num>](https://github.com/{owner}/{repo}/security/dependabot/<num>)
+- Resolved N of M open Dependabot security alerts by bumping vulnerable dependencies across `<area1>` and `<area2>`
+- <One-line note about any cross-cutting change, if applicable>
+- <One-line note about any unresolvable alerts, if applicable>
 ```
 
-**For 3 or more alerts**, include a resolution table:
+Only include a "Not resolved" subsection (with alert links) when there are alerts that genuinely could not be fixed and the user should know why. Use the full URL `https://github.com/{owner}/{repo}/security/dependabot/<num>` for any alert links — never bare `#<num>`, since GitHub resolves those to issues/PRs.
 
-```markdown
-## Summary
-
-- Resolved N open Dependabot security alerts by bumping vulnerable dependencies
-
-## Dependabot Alerts Resolved
-
-| Alert | Package | Severity | Fix |
-|-------|---------|----------|-----|
-| [Alert <num>](https://github.com/{owner}/{repo}/security/dependabot/<num>) | `<package>` | **<severity>** | Bumped to <version> via <mechanism> |
-```
-
-IMPORTANT: Always use the full URL `https://github.com/{owner}/{repo}/security/dependabot/<num>` for Dependabot alert links in PR bodies. Never use bare `#<num>` — GitHub resolves those to issues/PRs, not security alerts.
+Avoid:
+- Per-alert bullet lists
+- Resolution tables enumerating every package and version bump
+- Restating what each individual `<package>` was bumped to (the diff and Dependabot itself already capture this)
 
 ### Create the PR
 
 ```bash
-gh pr create --title "fix: resolve open dependabot security alerts" --body "$(cat <<'EOF'
+gh pr create --title "chore: resolve open dependabot security alerts" --body "$(cat <<'EOF'
 <PR body here>
 EOF
 )"
@@ -304,7 +329,8 @@ EOF
 ## Important reminders
 
 - Always derive `owner/repo` from `git remote -v`, never from the local folder path
-- For JS transitive deps, prefer `resolutions`/`overrides` over upgrading the parent package (less risk of breaking changes)
+- For JS transitive **dev/test deps**, bump the direct dev dependency that brings in the vulnerable package to a version that ships the fix
+- For JS transitive **production deps**, ask the user before proceeding — they may prefer bumping the parent, adding a permanent override, or accepting the risk
 - Some alerts may not have a patched version yet; note these as unresolvable and skip them
 - If an alert is for a dev/test-only dependency, it is still worth fixing but lower priority than production dependencies
 - Match the version range style used by the dependent package — if it uses `^`, your resolution should too; use an exact version only when the package is pinned exactly or has breaking changes in the patched release

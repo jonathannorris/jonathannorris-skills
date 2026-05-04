@@ -1,0 +1,9 @@
+{
+  "name": "playwright-cli",
+  "description": "Automate browser interactions, test web pages and write Playwright tests using the playwright-cli tool",
+  "author": {
+    "name": "Jonathan Norris",
+    "email": "jonathan@devcycle.com"
+  },
+  "version": "1.0.0"
+}
