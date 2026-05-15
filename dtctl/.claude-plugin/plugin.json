@@ -1,0 +1,9 @@
+{
+  "name": "dtctl",
+  "description": "Investigate incidents, debug performance issues, analyze logs, and manage observability resources in Dynatrace using the dtctl CLI.",
+  "author": {
+    "name": "Jonathan Norris",
+    "email": "jonathan@devcycle.com"
+  },
+  "version": "1.0.0"
+}

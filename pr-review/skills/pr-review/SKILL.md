@@ -178,7 +178,9 @@ Present the drafted response and wait. Do NOT post until the user explicitly app
 
 ### 4e. Post the response
 
-Reply in the existing review thread:
+**Prefer inline line-attached comments over general PR comments.** Use the general issue comment API only as a last resort (e.g., a general process question with no associated file or line).
+
+**Replying to an existing inline thread** (most common — use `in_reply_to` to stay in the thread):
 
 ```bash
 gh api repos/{owner}/{repo}/pulls/{number}/comments \
@@ -187,7 +189,29 @@ gh api repos/{owner}/{repo}/pulls/{number}/comments \
   -F in_reply_to=<parent_comment_id>
 ```
 
-For top-level PR comments (not inline):
+**Posting a new inline comment on a specific line** (when your response introduces a new observation tied to a file/line):
+
+First get the head commit SHA:
+
+```bash
+gh pr view <number> --json headRefOid --jq '.headRefOid'
+```
+
+Then post the inline comment:
+
+```bash
+gh api repos/{owner}/{repo}/pulls/{number}/comments \
+  --method POST \
+  -f body='<response text>' \
+  -f commit_id='<head_sha>' \
+  -f path='<file path, e.g. src/foo.ts>' \
+  -F line=<line number on the RIGHT side of the diff> \
+  -f side='RIGHT'
+```
+
+Use `side='LEFT'` when the comment refers to a deleted/original line; use `side='RIGHT'` for added or unchanged lines in the new version. If the comment spans multiple lines, add `-F start_line=<first line>` and `-f start_side='RIGHT'`.
+
+**General PR comment (last resort — no file/line context):**
 
 ```bash
 gh api repos/{owner}/{repo}/issues/{number}/comments \
