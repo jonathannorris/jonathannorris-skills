@@ -138,6 +138,8 @@ mutation {
 
 Default to resolving bot threads without posting a reply. Only post a reply to a bot thread if the user explicitly asks for one.
 
+**Never resolve human comment threads.** Only the user resolves those — either after they're satisfied with the response, or manually in the GitHub UI. Do not call `resolveReviewThread` on any thread that contains a human comment, even after posting a reply or making the requested code change.
+
 ## Step 4: Process human comments one-by-one
 
 This is the core loop. Work through each unresolved human comment thread sequentially:
@@ -276,6 +278,7 @@ The user may come back later to check for new comments. When asked to re-review:
 - Never post a comment without explicit user approval
 - Keep responses short; the user's style is direct and concise
 - Review bot comments on their merits; they often catch real issues. Resolve bot threads instead of posting replies, unless the user asks otherwise
+- Never resolve human comment threads — only the user does that
 - Read the voice profile (`~/.config/GITHUB_VOICE_PROFILE.md`) before drafting any responses
 - If a commenter's concern is unclear, research it before drafting a response rather than guessing
 - When the user provides business context or personal experience to include in a response, weave it in naturally
