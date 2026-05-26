@@ -1,12 +1,12 @@
 # Skills Repo
 
-This repo contains personal skills for **Claude Code** and **OpenCode**. Skills are SKILL.md files that teach an AI agent how to perform a specific task — when to activate, what commands to run, and how to sequence them.
+This repo contains personal skills for **Claude Code**, **OpenCode**, and **Cursor**. Skills are SKILL.md files that teach an AI agent how to perform a specific task — when to activate, what commands to run, and how to sequence them.
 
 ## How skills work
 
 A skill is loaded into the agent's context when the user invokes it (via `/skill-name` or a triggering phrase). The agent reads the SKILL.md and follows its instructions for the duration of that task.
 
-Both Claude Code and OpenCode read skills from different locations and in different formats. A new skill needs to be registered in both places to work in both tools.
+Claude Code, OpenCode, and Cursor each read skills from different locations and in slightly different formats. A new skill needs to be registered in all three places.
 
 ---
 
@@ -33,6 +33,14 @@ OpenCode reads from a separate flat location:
 ~/.config/opencode/skills/
 └── <skill-name>/
     └── SKILL.md                  # Same content, flat structure, no subdirectories
+```
+
+Cursor reads from a similar flat location (symlink the nested skill directory):
+
+```
+~/.cursor/skills/
+└── <skill-name> -> ~/git/skills/<skill-name>/skills/<skill-name>/
+    └── SKILL.md                  # Cursor finds SKILL.md at the symlink target root
 ```
 
 ---
@@ -119,7 +127,21 @@ The content is the same as the Claude Code SKILL.md, with two differences:
 - Remove `allowed-tools` from the frontmatter
 - Inline any reference content that matters — OpenCode can't follow relative file links into `references/`
 
-### Step 5 — Enable in Claude Code settings
+### Step 5 — Register in Cursor
+
+Cursor reads skills from `~/.cursor/skills/` and expects `SKILL.md` at the root of each skill directory. Symlink the nested skill directory (the one that contains `SKILL.md`) directly into `~/.cursor/skills/`:
+
+```bash
+ln -sf ~/git/skills/<skill-name>/skills/<skill-name> ~/.cursor/skills/<skill-name>
+```
+
+This gives Cursor a `SKILL.md` at the expected location without duplicating any content. Changes to the git repo SKILL.md are immediately reflected — no sync step needed.
+
+Cursor uses the same SKILL.md format as Claude Code. The `allowed-tools` field is ignored by Cursor but does not need to be removed.
+
+Cursor skills are loaded automatically — no equivalent of Claude Code's `enabledPlugins` is required.
+
+### Step 6 — Enable in Claude Code settings
 
 Adding a skill to the marketplace makes it available, but Claude Code won't load it until it's explicitly enabled. Add the skill to `enabledPlugins` in `~/.claude/settings.json`:
 
@@ -131,7 +153,7 @@ Adding a skill to the marketplace makes it available, but Claude Code won't load
 
 The key format is `<skill-name>@<marketplace-name>`, where the marketplace name matches the key in `extraKnownMarketplaces` — in this repo that's always `jonathan-skills`. Claude Code picks up the change on the next session start; no restart required if already running.
 
-OpenCode has no equivalent step — skills in `~/.config/opencode/skills/` are loaded automatically.
+OpenCode and Cursor have no equivalent step — skills in `~/.config/opencode/skills/` and `~/.cursor/skills/` are loaded automatically.
 
 ---
 
@@ -141,6 +163,7 @@ OpenCode has no equivalent step — skills in `~/.config/opencode/skills/` are l
 - [ ] `<name>/.claude-plugin/plugin.json` created
 - [ ] `.claude-plugin/marketplace.json` updated with new entry
 - [ ] `~/.config/opencode/skills/<name>/SKILL.md` created (flat, no `allowed-tools`)
+- [ ] `ln -sf ~/git/skills/<name>/skills/<name> ~/.cursor/skills/<name>` (Cursor symlink)
 - [ ] `~/.claude/settings.json` `enabledPlugins` updated with `<name>@jonathan-skills`
 - [ ] Optional: `<name>/skills/<name>/references/*.md` for deep-dive topics
 
@@ -157,7 +180,9 @@ cp ~/git/skills/<name>/skills/<name>/SKILL.md ~/.config/opencode/skills/<name>/S
 # Then manually strip the allowed-tools line from the OpenCode copy if present
 ```
 
-There is currently no automated sync between the two locations — they are maintained separately.
+**Cursor** requires no sync — the `~/.cursor/skills/<name>` symlink points directly into the git repo, so edits to `SKILL.md` are immediately visible.
+
+There is no automated sync between the git repo and the OpenCode copy — they are maintained separately.
 
 ---
 

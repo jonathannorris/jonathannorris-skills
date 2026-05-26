@@ -8,7 +8,7 @@ allowed-tools: Bash(hunk:*)
 
 Hunk is an interactive terminal diff viewer. The TUI is for the user -- do NOT run `hunk diff`, `hunk show`, or other interactive commands directly. Use `hunk session *` CLI commands to inspect and control live sessions through the local daemon.
 
-If no session exists, ask the user to launch Hunk in their terminal first.
+If no session exists, ask the user to launch Hunk in their terminal first. The correct way is to `cd` into the repo/worktree directory and run `hunk diff` (or `hunk show`, etc.). There is no `--repo` flag on the `hunk` launch command itself — `--repo` is only for `hunk session *` subcommands.
 
 ## Workflow
 
