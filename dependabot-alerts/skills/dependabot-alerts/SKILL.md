@@ -102,7 +102,31 @@ gh api --paginate --slurp repos/{owner}/{repo}/dependabot/alerts \
 
 2. **Direct dependency:** Bump the version in `package.json` `dependencies` or `devDependencies`.
 
-3. **Transitive dependency:** The right approach depends on whether the vulnerable package is a dev/test dependency or a production dependency.
+3. **Transitive dependency — try a lockfile-only bump first (preferred):**
+
+   Before touching `package.json`, check whether the patched version already satisfies the semver range that selected the vulnerable version in the lockfile. If it does, a plain upgrade is all that's needed — no `resolutions`/`overrides` entry required.
+
+   ```bash
+   # Check what range the parent declares for the vulnerable package
+   yarn why <package>        # shows the range each requester declares
+   npm ls <package>          # npm equivalent
+
+   # If the patched version satisfies the existing range, upgrade the lockfile only:
+   yarn upgrade <package>                        # yarn v1 — upgrades within existing range
+   yarn up "<package>@^<patched_version>"        # yarn v2/v3/v4
+   npm update <package>                          # npm
+   pnpm update <package>                         # pnpm
+   ```
+
+   Then verify the lockfile now resolves to the patched version:
+   ```bash
+   yarn why <package>
+   npm ls <package>
+   ```
+
+   **This is the preferred approach.** It produces a lockfile-only diff (no `package.json` changes), is less intrusive, and survives dependency tree changes naturally.
+
+   **Only add `resolutions`/`overrides` to `package.json` when the lockfile-only approach is not enough** — i.e., the patched version is outside every existing semver range that selects the package, so normal upgrade commands cannot reach it. The right approach then depends on whether the vulnerable package is a dev/test dependency or a production dependency.
 
    **Dev/test transitive deps — bump the direct dev dep:**
    For transitive deps that only affect development (test runners, linters, build tools, etc.), bump the direct dev dependency that brings in the vulnerable package to a version that ships the patched transitive dep:
@@ -122,7 +146,7 @@ gh api --paginate --slurp repos/{owner}/{repo}/dependabot/alerts \
    npm view "<parent>@latest" dependencies   # check what transitive version it ships
    ```
 
-   **When overrides in `package.json` are needed** (e.g. yarn, pnpm, repos without a committed lockfile, or production deps after user approval — see lockfile-pinning trick below as an alternative for npm):
+   **When overrides in `package.json` are necessary** (patched version is outside existing ranges, and no suitable parent upgrade exists):
    - **yarn (v1/classic):** Add to `resolutions` in `package.json`:
      ```json
      "resolutions": {
@@ -329,8 +353,9 @@ EOF
 ## Important reminders
 
 - Always derive `owner/repo` from `git remote -v`, never from the local folder path
-- For JS transitive **dev/test deps**, bump the direct dev dependency that brings in the vulnerable package to a version that ships the fix
-- For JS transitive **production deps**, ask the user before proceeding — they may prefer bumping the parent, adding a permanent override, or accepting the risk
+- **For JS transitive deps, always try a lockfile-only bump first** (`yarn upgrade <pkg>`, `npm update <pkg>`, `pnpm update <pkg>`). Only add `resolutions`/`overrides` to `package.json` when the patched version is outside every existing semver range — i.e., a plain upgrade cannot reach it. A lockfile-only diff is less intrusive and the strongly preferred outcome.
+- For JS transitive **dev/test deps** where a lockfile-only bump won't work, bump the direct dev dependency that brings in the vulnerable package to a version that ships the fix
+- For JS transitive **production deps** where a lockfile-only bump won't work, ask the user before proceeding — they may prefer bumping the parent, adding a permanent override, or accepting the risk
 - Some alerts may not have a patched version yet; note these as unresolvable and skip them
 - If an alert is for a dev/test-only dependency, it is still worth fixing but lower priority than production dependencies
 - Match the version range style used by the dependent package — if it uses `^`, your resolution should too; use an exact version only when the package is pinned exactly or has breaking changes in the patched release
