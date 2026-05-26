@@ -1,0 +1,9 @@
+{
+  "name": "worktree-audit",
+  "description": "Audit and prune stale git worktrees across all local repos",
+  "author": {
+    "name": "Jonathan Norris",
+    "email": "jonathan@devcycle.com"
+  },
+  "version": "1.0.0"
+}

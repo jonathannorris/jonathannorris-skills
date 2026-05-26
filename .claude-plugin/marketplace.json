@@ -48,6 +48,18 @@
       "description": "Interacts with live Hunk diff review sessions via CLI. Inspects review focus, navigates files and hunks, reloads session contents, and adds inline review comments.",
       "source": "./hunk-review",
       "category": "productivity"
+    },
+    {
+      "name": "mattpocock-skills",
+      "description": "Matt Pocock's engineering and productivity skills for real software work",
+      "source": "./vendor/mattpocock-skills",
+      "category": "productivity"
+    },
+    {
+      "name": "worktree-audit",
+      "description": "Audit and prune stale git worktrees across all local repos",
+      "source": "./worktree-audit",
+      "category": "productivity"
     }
   ]
 }
