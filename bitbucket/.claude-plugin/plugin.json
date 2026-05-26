@@ -1,0 +1,9 @@
+{
+  "name": "bitbucket",
+  "description": "Create, view, and manage pull requests and branches on Bitbucket Server (Data Center) via the REST API.",
+  "author": {
+    "name": "Jonathan Norris",
+    "email": "jonathan@devcycle.com"
+  },
+  "version": "1.0.0"
+}

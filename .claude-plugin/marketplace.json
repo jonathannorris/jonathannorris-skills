@@ -60,6 +60,12 @@
       "description": "Audit and prune stale git worktrees across all local repos",
       "source": "./worktree-audit",
       "category": "productivity"
+    },
+    {
+      "name": "bitbucket",
+      "description": "Create, view, and manage pull requests and branches on Bitbucket Server (Data Center) via the REST API.",
+      "source": "./bitbucket",
+      "category": "productivity"
     }
   ]
 }
