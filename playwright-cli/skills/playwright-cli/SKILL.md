@@ -4,17 +4,6 @@ description: Give an AI agent browser access to navigate, inspect, and interact 
 allowed-tools: Bash(playwright-cli:*) Bash(npx:*)
 ---
 
-## When to use this skill
-
-Use this skill when asked to:
-- "check if the page looks right after my changes"
-- "open the app and see if X works"
-- "take a screenshot of the current state"
-- "click through this flow and tell me what happens"
-- "look for any console errors on this page"
-- "verify the layout hasn't broken"
-- "what does the page look like now?"
-
 ## Core loop
 
 ```bash
@@ -113,35 +102,6 @@ playwright-cli screenshot --filename=before.png
 playwright-cli screenshot e5                      # just one element
 playwright-cli pdf --filename=page.pdf
 ```
-
-## Advanced: run arbitrary code
-
-When the CLI commands aren't enough, use `run-code` to execute full Playwright code:
-
-```bash
-# Wait for something to appear
-playwright-cli run-code "async page => {
-  await page.locator('.loading').waitFor({ state: 'hidden' });
-}"
-
-# Wait for app state
-playwright-cli run-code "async page => {
-  await page.waitForFunction(() => window.appReady === true);
-}"
-
-# Work with iframes
-playwright-cli run-code "async page => {
-  const frame = page.locator('iframe#embed').contentFrame();
-  return await frame.locator('h1').textContent();
-}"
-
-# Get full page content
-playwright-cli run-code "async page => {
-  return await page.content();
-}"
-```
-
-See [references/running-code.md](references/running-code.md) for the full reference.
 
 ## Reference docs
 
