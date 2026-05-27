@@ -112,14 +112,6 @@ hunk session comment clear --repo . --yes [--file README.md]
 - `comment list` and `comment clear` accept optional `--file`
 - Quote `--summary` and `--rationale` defensively in the shell
 
-## New files in working-tree reviews
-
-`hunk diff` includes untracked files by default. If the user wants tracked changes only, reload with `--exclude-untracked`:
-
-```bash
-hunk session reload --repo . -- diff --exclude-untracked
-```
-
 ## Guiding a review
 
 The user may ask you to walk them through a changeset or review code using Hunk. Start with `hunk session review --json` to understand the file/hunk structure without inflating agent context, then use `--include-patch` only for the files you truly need to read in raw diff form. Use `context` and `navigate` to line up the user's current view before adding comments.
@@ -143,13 +135,4 @@ Guidelines:
 - Keep comments focused: intent, structure, risks, or follow-ups
 - Don't comment on every hunk -- highlight what the user wouldn't spot themselves
 
-## Common errors
-
-- **"No visible diff file matches ..."** -- the file is not in the loaded review. Check `context`, then `reload` if needed.
-- **"No active Hunk sessions"** -- ask the user to open Hunk in their terminal.
-- **"Multiple active sessions match"** -- pass `<session-id>` explicitly.
-- **"No active Hunk session matches session path ..."** -- for advanced split-path reloads, verify the live window `Path` via `hunk session get` or `list`, then use `--session-path`.
-- **"Pass the replacement Hunk command after `--`"** -- include `--` before the nested `diff` / `show` command.
-- **"Pass --stdin to read batch comments from stdin JSON."** -- `comment apply` only reads its batch payload from stdin.
-- **"Specify exactly one navigation target"** -- pick one of `--hunk`, `--old-line`, or `--new-line`.
-- **"Specify either --next-comment or --prev-comment, not both."** -- choose one comment-navigation direction.
+For common errors and their fixes, see [REFERENCE.md](REFERENCE.md).
