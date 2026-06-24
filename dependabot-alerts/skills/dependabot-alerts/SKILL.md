@@ -15,15 +15,34 @@ git remote -v
 # Use "DevCycleHQ/cli"
 ```
 
+### Check for existing PRs addressing these alerts
+
+Before creating a branch or doing any work, check whether an open PR already exists for these alerts:
+
+```bash
+# Check for open PRs on the dependabot-alerts branch
+gh pr list --repo {owner}/{repo} --state open --head chore/dependabot-alerts --json number,title,url
+gh pr list --repo {owner}/{repo} --state open --head fix/dependabot-alerts --json number,title,url
+
+# Also check Dependabot's own automated PRs
+gh pr list --repo {owner}/{repo} --state open --author app/dependabot --json number,title,url --limit 20
+```
+
+If an open PR on `chore/dependabot-alerts` or `fix/dependabot-alerts` already exists (i.e. a PR we previously opened, not a Dependabot-generated PR):
+- Switch to that branch and update it with any new alert fixes rather than opening a new PR
+- Note the existing PR URL in your summary
+
+Dependabot's own automated PRs (author `app/dependabot`) should be left alone — do not modify or close them, and do not duplicate their fixes in our PR. Mention them in our PR description as related work (e.g. "Note: #123 is a Dependabot PR covering `lodash`").
+
 ### Create a clean branch off the default branch
 
 ```bash
 DEFAULT_BRANCH="$(gh repo view {owner}/{repo} --json defaultBranchRef --jq '.defaultBranchRef.name')"
 git fetch origin "$DEFAULT_BRANCH"
-git checkout -b fix/dependabot-alerts "origin/$DEFAULT_BRANCH"
+git checkout -b chore/dependabot-alerts "origin/$DEFAULT_BRANCH"
 ```
 
-If `fix/dependabot-alerts` already exists, use `fix/dependabot-alerts-2`.
+If `chore/dependabot-alerts` already exists locally or on remote (and there is no open PR to update), use `chore/dependabot-alerts-2`.
 
 ## Step 2: Fetch open alerts
 
@@ -77,10 +96,18 @@ Draft branch name, commit message, PR title, and PR body, then present to the us
 **PR body:** Short `## Summary` with 1-3 bullets: overall scope, any cross-cutting changes, any unresolvable alerts. No per-alert tables or exhaustive lists.
 
 ```bash
-gh pr create --title "chore: resolve open dependabot security alerts" --body "..."
+gh pr create --title "chore: resolve open dependabot security alerts" --body "..." --reviewer DevCycleHQ/engineering
 ```
 
 ## Step 7: Post-PR checks
+
+After creating the PR, request the engineering team as reviewer if not already requested:
+
+```bash
+gh pr edit <pr_number> --add-reviewer DevCycleHQ/engineering
+```
+
+Then check CI:
 
 ```bash
 gh pr checks <pr_number>
