@@ -80,20 +80,22 @@ For each unresolved human thread:
 
 **4d. Wait for user approval** — do NOT post until the user explicitly approves. Watch for: `"post"` / `"ok"` (post as-is), inline corrections (apply then post), `"skip"` / `"next"` (move on).
 
-**4e. Post** — prefer inline replies using `in_reply_to`:
+**4e. Post** — prefer inline replies using `in_reply_to`.
+
+Every comment posted through this skill is published by an AI agent workflow, so **prefix the body with `bot: `** (literal `bot:` followed by a space, then the response). This must be applied to all posted comments — inline replies, new inline comments, and general PR comments alike. The user's drafted/approved text goes after the prefix.
 
 ```bash
 # Reply in an existing thread (most common)
 gh api repos/{owner}/{repo}/pulls/{number}/comments \
   --method POST \
-  -f body='<response>' \
+  -f body='bot: <response>' \
   -F in_reply_to=<parent_comment_id>
 
 # New inline comment on a specific line
 HEAD_SHA=$(gh pr view <number> --json headRefOid --jq '.headRefOid')
 gh api repos/{owner}/{repo}/pulls/{number}/comments \
   --method POST \
-  -f body='<response>' \
+  -f body='bot: <response>' \
   -f commit_id="$HEAD_SHA" \
   -f path='<file path>' \
   -F line=<line number> \
@@ -102,7 +104,7 @@ gh api repos/{owner}/{repo}/pulls/{number}/comments \
 # General PR comment (last resort — no file/line context)
 gh api repos/{owner}/{repo}/issues/{number}/comments \
   --method POST \
-  -f body='<response>'
+  -f body='bot: <response>'
 ```
 
 Use `side='LEFT'` for deleted/original lines; `side='RIGHT'` for added or unchanged lines.
