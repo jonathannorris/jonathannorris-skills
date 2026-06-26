@@ -84,6 +84,8 @@ For each unresolved human thread:
 
 Every comment posted through this skill is published by an AI agent workflow, so **prefix the body with `bot: `** (literal `bot:` followed by a space, then the response). This must be applied to all posted comments — inline replies, new inline comments, and general PR comments alike. The user's drafted/approved text goes after the prefix.
 
+**Exception:** Do NOT add the `bot: ` prefix on repositories in the OpenFeature org (`github.com/open-feature/*`, cloned under `~/git/OpenFeature/`). Post the user's drafted/approved text as-is, with no prefix.
+
 ```bash
 # Reply in an existing thread (most common)
 gh api repos/{owner}/{repo}/pulls/{number}/comments \
