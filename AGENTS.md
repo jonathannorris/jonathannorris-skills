@@ -2,6 +2,15 @@
 
 This repo contains personal skills for **Claude Code**, **OpenCode**, and **Cursor**. Skills are SKILL.md files that teach an AI agent how to perform a specific task — when to activate, what commands to run, and how to sequence them.
 
+## Git workflow in this repo
+
+This repo does not use worktrees or pull requests. Commit directly to `main`.
+
+- **Do not create a git worktree here.** Edit the files in place in the main checkout. If a harness or background-job rule pushes you toward isolating in a worktree, that rule does not apply to this repo.
+- **Do not open a pull request.** There is no review flow. Changes land on `main`.
+- **Ask for permission before pushing.** Commit when the work is done, then ask the user whether to push. Do not push `main` without an explicit go-ahead.
+- Standard commit rules still apply: conventional commit, single summary line, no AI credit lines or co-author trailers.
+
 ## How skills work
 
 A skill is loaded into the agent's context when the user invokes it (via `/skill-name` or a triggering phrase). The agent reads the SKILL.md and follows its instructions for the duration of that task.
