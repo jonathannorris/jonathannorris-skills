@@ -10,11 +10,11 @@ allowed-tools: Bash(opencode:*) Bash(~/.claude/scripts/luna.sh:*)
 - "farm this out to a cheaper model"
 - "kick off an opencode session to do X"
 
-Good fits: bulk mechanical edits, repo surveys, dependency bumps, test-writing passes; work
-that is verifiable after the fact. Do not delegate work that needs your own judgment mid-task,
-or anything touching credentials or destructive git operations.
+Good fits: bulk mechanical edits, repo surveys, dependency bumps, test-writing passes; work that
+is verifiable after the fact. Don't delegate work needing your judgment mid-task, or anything
+touching credentials or destructive git operations.
 
-## Launch a session
+## Launch
 
 ```bash
 opencode run --dir <repo-path> \
@@ -23,55 +23,32 @@ opencode run --dir <repo-path> \
   "<prompt>"
 ```
 
-Run it via Bash with `run_in_background: true`. The final assistant message goes to stdout;
-you are re-invoked when the process exits.
+Run via Bash with `run_in_background: true`. The final assistant message goes to stdout; you are
+re-invoked when the process exits. Shorthand: `~/.claude/scripts/luna.sh -d <repo> "<prompt>"`
+(`-v` variant, `-a` agent, `-s` session id, `-j` JSON events).
 
-Shorthand wrapper (same thing, optional): `~/.claude/scripts/luna.sh -d <repo> "<prompt>"`,
-with `-v <variant>`, `-a <agent>`, `-s <session-id>`, `-j` for JSON.
+Each of the four flags above prevents a specific failure:
 
-## Flags that matter
+- **`--model github-copilot/gpt-5.6-luna`** — NOT `cursor-acp/gpt-5.6-luna-*`. Those need a
+  separate Cursor login and fail with `Authentication required`.
+- **`--variant xhigh`** — reasoning effort (`none|low|medium|high|xhigh|max`). On Copilot this is
+  a flag, never part of the model id. A misspelled variant is silently ignored and the model runs
+  with no reasoning and no error; confirm with `-j` and check `reasoning` > 0.
+- **`--auto`** — approves permissions not explicitly denied. Without it an unattended run can hang
+  on a prompt and never exit.
+- **`--dir`** — set the working directory explicitly; don't rely on cwd.
 
-- `--model github-copilot/gpt-5.6-luna` — the Copilot provider. NOT `cursor-acp/gpt-5.6-luna-*`;
-  those need a separate Cursor login and fail with `Authentication required`.
-- `--variant xhigh` — reasoning effort. Valid: `none|low|medium|high|xhigh|max`. On Copilot the
-  effort is this flag, never part of the model id. A misspelled variant is silently ignored and
-  the model runs with no reasoning at all, with no error. Verify with `-j` and check `reasoning` > 0.
-- `--agent` — `build` (default, can edit), `plan`, `explore`, `general`.
-- `--auto` — approve permissions that are not explicitly denied. Required for unattended runs;
-  otherwise the session can hang on a permission prompt and never exit.
-- `--dir` — working directory for the session. Set it explicitly; don't rely on cwd.
-- `--format json` / `-j` — one JSON event per line, with per-step `tokens` and `cost`.
+Agents: `build` (default, can edit), `plan`, `explore`, `general`. To continue a session instead of
+re-sending context, pass `--session <ses_id>` (the id is in `-j` output as `sessionID`).
 
-## Writing the prompt
+## Write a self-contained prompt
 
-The sub-agent has no access to your conversation. Include everything it needs:
+The sub-agent sees none of your conversation. Include absolute paths, the concrete outcome, the
+exact verification command, and whether it may commit (default: "do not commit, leave changes in
+the working tree").
 
-- Absolute paths to the files or repo involved
-- The concrete outcome, and how it should verify (the exact test or build command)
-- Whether it may commit (default: no; say "do not commit, leave changes in the working tree")
+## Verify before reporting
 
-## Multi-turn
-
-Each run has a session id (in `-j` output as `sessionID`). Continue it instead of re-sending context:
-
-```bash
-opencode run --session <ses_id> --model github-copilot/gpt-5.6-luna --variant xhigh "<follow-up>"
-```
-
-## After it finishes
-
-Never report the sub-agent's claims as your own verified result. Check the actual work:
-`git -C <repo> diff --stat`, read the changed files, run the test command yourself. Luna at xhigh
-is capable but will occasionally report success on work it did not finish.
-
-## Gotchas
-
-- Chaining setup (e.g. `chmod`) and the `--auto` run in one Bash call can trip Claude Code's
-  auto-mode permission classifier. Use separate calls.
-- Tool calls outside the paths allowed in `~/.config/opencode/opencode.json`
-  (`permission.external_directory`, currently `~/git/**` and `~/.config/**`) may prompt. With
-  `--auto` they are approved; without it the run can stall.
-- The `cost` in JSON output is a per-token estimate. Copilot bills by premium request, so it does
-  not reflect actual spend; treat it as relative signal only.
-- Startup is ~1-2s per invocation. For many sequential prompts, reuse a session or run
-  `opencode serve` and attach with `--attach`.
+Never pass the sub-agent's claims off as your own verified result. Run `git -C <repo> diff --stat`,
+read the changed files, and run the test command yourself. Luna at xhigh is capable but will
+occasionally report success on work it did not finish.
