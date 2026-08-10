@@ -1,0 +1,9 @@
+{
+  "name": "sideshow",
+  "description": "Draw live previews to the user's sideshow surface: diagrams, UI sketches, data visualizations, interactive explainers, code reviews, and receive their comments back.",
+  "author": {
+    "name": "Jonathan Norris",
+    "email": "jonathan@devcycle.com"
+  },
+  "version": "1.0.0"
+}

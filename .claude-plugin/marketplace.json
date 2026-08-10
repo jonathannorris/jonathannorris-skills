@@ -66,6 +66,12 @@
       "description": "Create, view, and manage pull requests and branches on Bitbucket Server (Data Center) via the REST API.",
       "source": "./bitbucket",
       "category": "productivity"
+    },
+    {
+      "name": "sideshow",
+      "description": "Draw live previews to the user's sideshow surface: diagrams, UI sketches, data visualizations, interactive explainers, code reviews, and receive their comments back.",
+      "source": "./sideshow",
+      "category": "productivity"
     }
   ]
 }
