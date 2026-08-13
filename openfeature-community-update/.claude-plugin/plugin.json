@@ -1,0 +1,9 @@
+{
+  "name": "openfeature-community-update",
+  "description": "Draft, verify, and publish OpenFeature community update blog posts on openfeature.dev",
+  "author": {
+    "name": "Jonathan Norris",
+    "email": "jonathan@devcycle.com"
+  },
+  "version": "1.0.0"
+}
