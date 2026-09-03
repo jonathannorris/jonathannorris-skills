@@ -1,0 +1,9 @@
+{
+  "name": "openfeature-provider-catalog",
+  "description": "Add OpenFeature provider entries to openfeature.dev by researching provider documentation, classifying technologies, and adding compliant catalog logos.",
+  "author": {
+    "name": "Jonathan Norris",
+    "email": "jonathan@devcycle.com"
+  },
+  "version": "1.0.0"
+}

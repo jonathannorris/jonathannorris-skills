@@ -1,5 +1,5 @@
 ---
-name: openfeature-community-update
+name: openfeature-community-updates-blog
 description: Draft, fact-check, and publish an OpenFeature community update blog post on openfeature.dev, covering source gathering across the org, vendor-neutral voice, batched GitHub verification of every PR/issue/release claim, link checking, and the worktree-to-draft-PR publish flow. Use when asked to write or update an OpenFeature blog post, community update, mid-year or quarterly recap, ecosystem roundup, or release announcement -- e.g. "draft the mid-2026 community update", "write a blog post about what shipped this quarter", "add the new vendors to the update post", "turn these community notes into a blog post".
 ---
 

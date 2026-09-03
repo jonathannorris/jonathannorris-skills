@@ -80,9 +80,51 @@
       "category": "productivity"
     },
     {
-      "name": "openfeature-community-update",
+      "name": "openfeature-community-updates-blog",
       "description": "Draft, verify, and publish OpenFeature community update blog posts on openfeature.dev",
-      "source": "./openfeature-community-update",
+      "source": "./openfeature-community-updates-blog",
+      "category": "productivity"
+    },
+    {
+      "name": "openfeature-provider-catalog",
+      "description": "Add OpenFeature provider entries to openfeature.dev by researching provider documentation, classifying technologies, and adding compliant catalog logos.",
+      "source": "./openfeature-provider-catalog",
+      "category": "productivity"
+    },
+    {
+      "name": "dt-jira-on-grail",
+      "description": "Query team Jira data on Grail Community Ingest via dtctl DQL. Answers maintenance work, sprint contribution, and current sprint questions for any R&D team.",
+      "source": "./dt-jira-on-grail",
+      "category": "productivity"
+    },
+    {
+      "name": "dt-jira",
+      "description": "PII-safe Jira CLI (acli-pii) for managing Jira issues through a PII-redacting proxy.",
+      "source": "./dt-jira",
+      "category": "productivity"
+    },
+    {
+      "name": "dt-artifactory",
+      "description": "Artifactory operations using the JFrog CLI (jf).",
+      "source": "./dt-artifactory",
+      "category": "infrastructure"
+    },
+    {
+      "name": "dt-timecockpit",
+      "description": "TimeCockpit skill for time tracking and reporting.",
+      "source": "./dt-timecockpit",
+      "category": "productivity"
+    },
+    {
+      "name": "dt-kspm-investigate",
+      "description": "Query KSPM compliance findings and Smartscape topology in Grail for security investigations.",
+      "source": "./dt-kspm-investigate",
+      "category": "security"
+    },
+    {
+      "name": "dt-atlassian-pii",
+      "description": "Atlassian CLI with PII redaction (acli-pii) for Jira and Confluence.",
+      "source": "./dt-atlassian-pii",
       "category": "productivity"
     }
   ]
