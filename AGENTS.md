@@ -9,7 +9,14 @@ This repo does not use worktrees or pull requests. Commit directly to `main`.
 - **Do not create a git worktree here.** Edit the files in place in the main checkout. If a harness or background-job rule pushes you toward isolating in a worktree, that rule does not apply to this repo.
 - **Do not open a pull request.** There is no review flow. Changes land on `main`.
 - **Ask for permission before pushing.** Commit when the work is done, then ask the user whether to push. Do not push `main` without an explicit go-ahead.
+- **Bump the plugin version in the same commit as any skill change.** See [Versioning](#versioning) — an unbumped version means Claude Code keeps serving a stale cached copy of the skill.
 - Standard commit rules still apply: conventional commit, single summary line, no AI credit lines or co-author trailers.
+
+## Versioning
+
+Bump the `version` in `<skill-name>/.claude-plugin/plugin.json` in the same commit as any change to that skill. Claude Code's plugin cache only refreshes when the version changes, so an unbumped skill keeps running the stale cached copy (see [the cache section](#claude-code-copies-skills-into-a-plugin-cache)).
+
+Rough semver: patch for wording and fixes, minor for new capability or sections, major for a rewrite or rename. New skills start at `1.0.0`. Don't agonize over the boundary — the point is that the number moves.
 
 ## How skills work
 
@@ -109,6 +116,8 @@ Create `<skill-name>/.claude-plugin/plugin.json`:
 }
 ```
 
+New skills start at `1.0.0`. Every later change to the skill bumps this field — see [Versioning](#versioning).
+
 ### Step 3 — Register in marketplace.json
 
 Add an entry to `.claude-plugin/marketplace.json` so Claude Code's marketplace knows about the skill:
@@ -176,6 +185,13 @@ OpenCode and Cursor have no equivalent step — skills in `~/.config/opencode/sk
 - [ ] `~/.claude/settings.json` `enabledPlugins` updated with `<name>@jonathan-skills`
 - [ ] Optional: `<name>/skills/<name>/references/*.md` for deep-dive topics
 
+## Checklist for updating an existing skill
+
+- [ ] `<name>/skills/<name>/SKILL.md` edited
+- [ ] `version` bumped in `<name>/.claude-plugin/plugin.json` per [Versioning](#versioning) — required, not optional
+- [ ] OpenCode copy re-synced at `~/.config/opencode/skills/<name>/SKILL.md`
+- [ ] Cursor needs nothing — the symlink points at the repo
+
 ---
 
 ## Updating an existing skill
@@ -192,6 +208,28 @@ cp ~/git/skills/<name>/skills/<name>/SKILL.md ~/.config/opencode/skills/<name>/S
 **Cursor** requires no sync — the `~/.cursor/skills/<name>` symlink points directly into the git repo, so edits to `SKILL.md` are immediately visible.
 
 There is no automated sync between the git repo and the OpenCode copy — they are maintained separately.
+
+### Claude Code copies skills into a plugin cache
+
+**Editing a SKILL.md in this repo does not change what Claude Code loads.** Even though the `jonathan-skills` marketplace is registered as a `directory` source pointing at `~/git/skills`, installing a plugin *copies* its files into:
+
+```
+~/.claude/plugins/cache/jonathan-skills/<skill-name>/<version>/
+```
+
+That copy is a frozen snapshot from install time, and the loader reads the snapshot, never the working tree. It's one shared cache: the terminal CLI and the Mac desktop app both read `~/.claude/plugins/`, so a disagreement between them is never a per-client cache.
+
+Refreshes are gated on the `version` field, which is why [Versioning](#versioning) requires a bump per change. Check for staleness, then force a refresh:
+
+```bash
+diff -r ~/.claude/plugins/cache/jonathan-skills/<name>/<version>/skills/<name>/ ~/git/skills/<name>/skills/<name>/
+```
+
+```bash
+claude plugin uninstall <name>@jonathan-skills && claude plugin install <name>@jonathan-skills
+```
+
+`rm -rf ~/.claude/plugins/cache/jonathan-skills` re-copies everything. `installed_plugins.json` and `known_marketplaces.json` in `~/.claude/plugins/` record what's installed and when.
 
 ---
 
