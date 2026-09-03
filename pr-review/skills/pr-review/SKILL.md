@@ -96,12 +96,17 @@ If the user declines to add a comment, post the research block on its own with t
 
 ---
 
-**🤖 Claude Code research**
-
+> [!NOTE]
+> **🤖 Claude Code research**
+>
 > <research block>
 ```
 
-Blockquote details: prefix every line of the research with `> `, including blank lines (as a bare `>`) so the quote does not split into separate blocks. If the research contains a table or a long fenced code block, leaving those elements outside the blockquote is fine; the attribution header still scopes them.
+Alert details: the research goes in a GitHub `> [!NOTE]` alert, which renders as a bordered callout while still rendering markdown inside, so keep inline backticks, bold, and links. Prefix every line with `> `, including blank lines as a bare `>`, or the alert terminates early. The `[!NOTE]` label and the attribution line are separate lines; do not merge them. The alert title is fixed and cannot be customised, which is why the attribution header sits inside the block.
+
+Do not use a plain fenced block for the research. Nothing renders inside a fence and GitHub adds a horizontal scrollbar instead of wrapping.
+
+If the research contains a table or its own fenced code block, leave those elements outside the alert; the attribution header still scopes them.
 
 Write the composed body to a file and post it with `-F body=@<file>` rather than passing it inline. Bodies contain backticks and quotes, which get mangled when passed as a shell argument.
 
