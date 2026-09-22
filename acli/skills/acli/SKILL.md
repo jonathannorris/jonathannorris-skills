@@ -76,6 +76,45 @@ acli-pii jira workitem comment list --key ICP-123
 
 ---
 
+## Formatting descriptions and comments
+
+`--description` / `--body` take **either** plain text **or** Atlassian Document Format (ADF) JSON. Plain text is stored as plain paragraphs: a leading `-` stays a literal dash and `###` stays literal `###`. You never get real bullet lists, headings, or inline code from plain text.
+
+Pick based on structure:
+
+| Content | Use |
+|---|---|
+| A sentence or two, no structure | `--description "..."` |
+| Headings, bullet lists, inline code, links | ADF via `--description-file` |
+
+```bash
+# Plain text: fine for short, unstructured content
+acli-pii jira workitem edit --key ICP-123 --description "Bumped the timeout to 4s." --yes
+
+# ADF: anything with real structure
+acli-pii jira workitem edit --key ICP-123 --description-file desc.json --yes
+acli-pii jira workitem create --project ICP --type Story --summary "Title" --description-file desc.json
+acli-pii jira workitem comment create --key ICP-123 --body-file comment.json
+```
+
+Always validate the JSON before sending; `acli` reports a generic failure on a malformed document.
+
+```bash
+python3 -c "import json;json.load(open('desc.json'))" && acli-pii jira workitem edit --key ICP-123 --description-file desc.json --yes
+```
+
+Then read it back, because a silently mangled description looks identical to a successful edit:
+
+```bash
+acli-pii jira workitem view ICP-123 --fields description
+```
+
+Note that `view` flattens headings into bare text, so use it to confirm the words are present, not to judge the rendering. Check the Jira UI for that.
+
+For the ADF node reference and a copy-paste template, see [REFERENCE.md](REFERENCE.md).
+
+---
+
 ## Common JQL patterns
 
 ```bash
