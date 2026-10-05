@@ -74,12 +74,6 @@
       "category": "productivity"
     },
     {
-      "name": "opencode-luna-background-agent",
-      "description": "Delegate a task to a cheap headless OpenCode session running GPT-5.6 Luna via GitHub Copilot",
-      "source": "./opencode-luna-background-agent",
-      "category": "productivity"
-    },
-    {
       "name": "openfeature-community-updates-blog",
       "description": "Draft, verify, and publish OpenFeature community update blog posts on openfeature.dev",
       "source": "./openfeature-community-updates-blog",
