@@ -92,12 +92,6 @@
       "category": "productivity"
     },
     {
-      "name": "dt-jira",
-      "description": "PII-safe Jira CLI (acli-pii) for managing Jira issues through a PII-redacting proxy.",
-      "source": "./dt-jira",
-      "category": "productivity"
-    },
-    {
       "name": "dt-artifactory",
       "description": "Artifactory operations using the JFrog CLI (jf).",
       "source": "./dt-artifactory",
