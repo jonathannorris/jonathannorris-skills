@@ -116,12 +116,6 @@
       "category": "security"
     },
     {
-      "name": "dt-atlassian-pii",
-      "description": "Atlassian CLI with PII redaction (acli-pii) for Jira and Confluence.",
-      "source": "./dt-atlassian-pii",
-      "category": "productivity"
-    },
-    {
       "name": "junoctl",
       "description": "Query the Juno developer platform (Backstage catalog, TechDocs, templates, scaffolder actions) with the junoctl CLI.",
       "source": "./junoctl",
