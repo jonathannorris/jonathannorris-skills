@@ -84,6 +84,8 @@ configurations.all {
 }
 ```
 
+**Android + Kotlin Gradle plugin bumps:** AGP's bundled lint only understands Kotlin metadata up to a certain version. If a newer Kotlin breaks lint (`Module was compiled with an incompatible version of Kotlin` or a crash in `AndroidLintWorkAction`), set `android.experimental.lint.version=<newer stable AGP version>` in `gradle.properties` instead of a major AGP upgrade.
+
 **Maven:** Update in `pom.xml` or use `<dependencyManagement>`. Verify with `mvn verify`.
 
 ## Swift
@@ -113,5 +115,6 @@ Bump action versions in `.github/workflows/*.yml`:
 - For JS dev/test transitive deps: bump the direct dev dep instead of using overrides
 - For JS production transitive deps: ask the user before adding permanent overrides
 - Some alerts may have no patched version yet; note these as unresolvable and skip them
+- Never bump to a pre-release (alpha, beta, RC, milestone, snapshot, etc.); use the first stable release at or above `first_patched_version`, or leave the alert unresolved if none exists
 - Match the version range style of the dependent package (`^` if it uses `^`)
 - Do NOT use `#<number>` in commit messages or PR bodies for alert references

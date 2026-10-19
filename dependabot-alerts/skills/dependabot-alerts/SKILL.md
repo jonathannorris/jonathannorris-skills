@@ -61,6 +61,12 @@ gh api --paginate --slurp repos/{owner}/{repo}/dependabot/alerts \
 
 If `patched` is null, check `.security_advisory.vulnerabilities[]` for `first_patched_version`.
 
+### Never upgrade to a pre-release version
+
+Only bump to stable releases. Do NOT use alpha, beta, RC, milestone, preview, canary, nightly, dev, or snapshot versions (e.g. `2.4.20-Beta1`, `1.0.0-rc.2`, `3.0.0a1`, `5.0.0-M1`), even when the advisory's `first_patched_version` is one.
+
+If `first_patched_version` is a pre-release, check the package registry for the earliest stable release at or above it (e.g. `2.4.20` or a later patch like `2.4.21`) and use that. If no stable patched release exists yet, leave the alert unresolved and note it in the PR summary.
+
 ## Step 3: Fix vulnerabilities by ecosystem
 
 See [REFERENCE.md](REFERENCE.md) for ecosystem-specific instructions: npm/yarn/pnpm, pip, Go, Java, Swift, .NET, Ruby, GitHub Actions.
