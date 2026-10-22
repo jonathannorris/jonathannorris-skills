@@ -1,0 +1,9 @@
+{
+  "name": "mongo-atlas-cli",
+  "description": "Investigate MongoDB Atlas cluster and query performance with the read-only Atlas CLI (atlas), including metrics, Performance Advisor, slow query logs, and alerts.",
+  "author": {
+    "name": "Jonathan Norris",
+    "email": "jonathan@devcycle.com"
+  },
+  "version": "1.0.0"
+}

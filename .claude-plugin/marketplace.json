@@ -114,6 +114,12 @@
       "description": "Query the Juno developer platform (Backstage catalog, TechDocs, templates, scaffolder actions) with the junoctl CLI.",
       "source": "./junoctl",
       "category": "infrastructure"
+    },
+    {
+      "name": "mongo-atlas-cli",
+      "description": "Investigate MongoDB Atlas cluster and query performance with the read-only Atlas CLI (atlas), including metrics, Performance Advisor, slow query logs, and alerts.",
+      "source": "./mongo-atlas-cli",
+      "category": "infrastructure"
     }
   ]
 }
