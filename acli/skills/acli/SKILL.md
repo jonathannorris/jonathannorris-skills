@@ -63,8 +63,12 @@ acli jira workitem assign --key ICP-123 --assignee user@dynatrace.com
 
 ```bash
 acli jira workitem comment create --key ICP-123 --body "Comment text"
+acli jira workitem comment create --key ICP-123 --body-file comment.json   # ADF, see below
+acli jira workitem comment create --key ICP-123 --body-file comment.json --edit-last
 acli jira workitem comment list --key ICP-123
 ```
+
+`--edit-last` replaces your most recent comment on the item instead of adding a new one. Use it to fix a comment you already posted (wording or formatting) so the ticket doesn't end up with a duplicate.
 
 ---
 
@@ -76,8 +80,12 @@ Pick based on structure:
 
 | Content | Use |
 |---|---|
-| A sentence or two, no structure | `--description "..."` |
-| Headings, bullet lists, inline code, links | ADF via `--description-file` |
+| A sentence or two, no structure | `--description "..."` / `--body "..."` |
+| Headings, bullet lists, inline code, links | ADF via `--description-file` / `--body-file` |
+
+If a draft has lines starting with `-`, `*`, `#`, or contains identifiers, file paths, or regexes that belong in backticks, it needs ADF. Posting it as plain text shows the raw dashes and lets long regexes wrap mid-pattern. Wrap field names, schema IDs, paths, patterns, and commands in `code` marks.
+
+Build ADF with a small Python script (helpers plus `json.dump`) rather than hand-writing JSON: it keeps backslashes in regexes and quotes correct without manual escaping. See the builder in [REFERENCE.md](REFERENCE.md).
 
 ```bash
 # Plain text: fine for short, unstructured content
@@ -101,7 +109,9 @@ Then read it back, because a silently mangled description looks identical to a s
 acli jira workitem view ICP-123 --fields description
 ```
 
-Note that `view` flattens headings into bare text, so use it to confirm the words are present, not to judge the rendering. Check the Jira UI for that.
+For comments, read back with `acli jira workitem comment list --key ICP-123 --json`. If the body comes back as literal JSON text (`{"type":"doc"...`), acli stored the file as plain text: fix the JSON and re-post with `--edit-last`.
+
+Note that `view` and `comment list` flatten headings and code marks into bare text, so use them to confirm the words are present, not to judge the rendering. Check the Jira UI for that.
 
 For the ADF node reference and a copy-paste template, see [REFERENCE.md](REFERENCE.md).
 

@@ -83,6 +83,32 @@ Two constraints that are easy to trip over:
 }
 ```
 
+### Building ADF from Python
+
+Hand-written ADF gets verbose fast, and regexes or Windows paths need double escaping inside JSON. Build the document with small helpers instead; raw strings (`r"..."`) keep backslashes intact:
+
+```python
+import json, sys
+def t(s): return {"type": "text", "text": s}
+def c(s): return {"type": "text", "text": s, "marks": [{"type": "code"}]}
+def p(*n): return {"type": "paragraph", "content": list(n)}
+def li(*n): return {"type": "listItem", "content": [p(*n)]}
+def ul(*items): return {"type": "bulletList", "content": list(items)}
+
+doc = {"type": "doc", "version": 1, "content": [
+    p(t("Checked "), c("app:schema-id"), t(". No change needed.")),
+    ul(
+        li(c("token"), t(": already type "), c("secret"), t(".")),
+        li(c("host"), t(": restricted by "), c(r"^[a-z0-9]+\.example\.com$"), t(".")),
+    ),
+]}
+json.dump(doc, open(sys.argv[1], "w"))
+```
+
+```bash
+python3 build_comment.py comment.json && acli jira workitem comment create --key ICP-123 --body-file comment.json
+```
+
 ### Editing an existing description
 
 Keep the ADF file next to the work you are doing and edit the JSON rather than retyping the
