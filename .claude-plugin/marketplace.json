@@ -92,6 +92,12 @@
       "category": "productivity"
     },
     {
+      "name": "dt-atlassian-pii",
+      "description": "Atlassian CLI with PII redaction (acli-pii) for Jira and Confluence, sourced from Juno.",
+      "source": "./dt-atlassian-pii",
+      "category": "productivity"
+    },
+    {
       "name": "dt-artifactory",
       "description": "Artifactory operations using the JFrog CLI (jf).",
       "source": "./dt-artifactory",
@@ -120,6 +126,12 @@
       "description": "Investigate MongoDB Atlas cluster and query performance with the read-only Atlas CLI (atlas), including metrics, Performance Advisor, slow query logs, and alerts.",
       "source": "./mongo-atlas-cli",
       "category": "infrastructure"
+    },
+    {
+      "name": "dt-brotli-emudhra-audit",
+      "description": "Audit a developer machine for brotli CVE-2026-111497 (Node2Shell) and trust stores that still trust the compromised eMudhra / Comodo AAA roots, sourced from shared-engineering-skills.",
+      "source": "./dt-brotli-emudhra-audit",
+      "category": "security"
     }
   ]
 }
